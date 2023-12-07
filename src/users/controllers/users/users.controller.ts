@@ -1,41 +1,27 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpStatus,
-  Param,
-  ParseIntPipe,
-  Post,
-  Req,
-  Res,
-} from '@nestjs/common';
-import { Request, Response } from 'express';
-import { CreateUserDto } from 'src/users/dtos/createUsers.dto';
+import { Controller, Get, HttpStatus, Res, UseGuards } from '@nestjs/common';
+import { Response } from 'express';
+import { Query } from 'src/Decorators/user.decorator';
+import { JwtAuthGuard } from 'src/auth/guard/auth.guard';
+import { User } from 'src/users/decorators/user.decorator';
 import { UsersService } from 'src/users/services/users/users.service';
 
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
-  @Get(':id')
-  getUser(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
-    const user = this.usersService.findUser(id);
-    if (user) {
-      res.send(user);
-    } else {
-      res.status(HttpStatus.BAD_REQUEST).send({ message: 'User not found' });
+  @UseGuards(JwtAuthGuard)
+  @Get('findByName')
+  async getUserByName(@Query() query: { name: string }, @Res() res: Response) {
+    const { name } = query;
+
+    const user = await this.usersService.findOneByName(name);
+
+    if (!user) {
+      return res.status(HttpStatus.NOT_FOUND).json({
+        message: 'User not found',
+      });
     }
-  }
 
-  @Get()
-  getAllUsers(@Res() res: Response) {
-    res.send(this.usersService.getAllUsers());
-  }
-
-  @Post('create')
-  createUser(@Body() newUserData: CreateUserDto, @Res() res: Response) {
-    console.log('new', newUserData);
-    this.usersService.createCustomer(newUserData);
-    res.send({ message: 'User created successfully' });
+    return res.status(HttpStatus.OK).json(user);
   }
 }
