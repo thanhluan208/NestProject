@@ -7,6 +7,7 @@ export class User {
   @Prop()
   name: string;
 
+  @Prop()
   age: number;
 
   @Prop()
@@ -22,7 +23,7 @@ export class User {
   password: string;
 
   @Prop()
-  role: string;
+  accessToken: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

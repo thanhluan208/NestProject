@@ -7,4 +7,6 @@ export class createUserDto extends registerDataDto {
 
   @IsDate()
   updatedAt?: Date;
+
+  accessToken?: string;
 }

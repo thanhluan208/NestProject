@@ -20,8 +20,13 @@ export class registerDataDto {
 
   @IsNotEmpty()
   name: string;
+}
+
+export class registerGoogleDto {
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
 
   @IsNotEmpty()
-  @IsValidRole()
-  role: string;
+  name: string;
 }
