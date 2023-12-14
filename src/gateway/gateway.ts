@@ -17,6 +17,7 @@ export class SocketGateWay implements OnModuleInit {
     this.server.on('connection', (socket) => {
       console.log(socket.id);
       console.log('connected');
+      socket.emit('connection', `connected to ${socket.id}`);
     });
   }
 
